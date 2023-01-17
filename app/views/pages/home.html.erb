@@ -1,2 +1,71 @@
-<h1>Pages#home</h1>
-<p>Find me in app/views/pages/home.html.erb</p>
+<h1 class = "text-light text-center mt-5">Visualize TikTok API Data on charts</h1>
+
+<div class="container position-relative py-5">
+  <%= form_with url: root_path, method: :get, class: "searchBox" do %>
+    <%= text_field_tag :query,
+      params[:query],
+      class: "searchInput string required",
+      placeholder: "Search for a video"
+    %>
+    <%# <%= submit_tag "Search", class: "btn btn-primary" %>
+    <button name="button" type="submit" class="searchButton">
+      <i class="fas fa-search"></i>
+    </button>
+  <% end %>
+</div>
+
+
+<div class="chart-row">
+  <div class="col-5 p-3 border border-1 chart">
+    <h3 class = "text-center" >Numbers of hearts got, grouped by author</h3>
+    <%= column_chart @likes_by_month_and_author, stacked: true, discrete: true, height: "500px" %>
+  </div>
+  <div class="col-5 p-3 border border-1 chart">
+    <h3 class = "text-center" >Numbers of plays got, grouped by author</h3>
+    <%= column_chart @plays_by_month_and_author, stacked: true, discrete: true, height: "500px" %>
+  </div>
+</div>
+
+<div class="chart-row">
+  <div class="col-5 p-3 border border-1 chart">
+    <h3 class = "text-center" >Numbers of reposts got, grouped by author</h3>
+    <%= bar_chart @reposts_by_month_and_author, stacked: true, discrete: true, height: "500px" %>
+  </div>
+  <div class="col-5 p-3 border border-1 chart">
+    <h3 class = "text-center" >Numbers of videos created, grouped by month</h3>
+    <%= column_chart Video.group_by_month(:create_time).count, height: "500px" %>
+  </div>
+</div>
+
+<div class="row p-4 gap-3 justify-content-evenly">
+  <% Video.all.each do |video| %>
+    <div class="col-3 info-box">
+      <div class="row">
+        <p><span class = "fw-bold">Author :</span> <%= video.author %></p>
+        <p class = "w-100">
+          <span class = "fw-bold">URL :</span>  <%= video.url.truncate(50)  %>
+        </p>
+        <%= link_to video.url, target: "_blank" do %>
+          <i class="fa-sharp fa-solid fa-arrow-up-right-from-square vid-link"></i>
+        <% end %>
+      </div>
+      <div class="row">
+        <div class="col-6">
+          <p><span class = "fw-bold">Comments :</span>  <%= video.number_of_comments %></p>
+          <p><span class = "fw-bold">Likes :</span>  <%= video.number_of_hearts %></p>
+          <p><span class = "fw-bold">Plays :</span>  <%= video.number_of_plays %></p>
+          <p><span class = "fw-bold">Reposts :</span>  <%= video.number_of_reposts %></p>
+        </div>
+        <div class="col-6">
+          <p><span class = "fw-bold">Duration :</span>  <%= video.duration %></p>
+          <p><span class = "fw-bold">Bitrate :</span>  <%= video.bitrate %></p>
+          <p><span class = "fw-bold">Create on :</span>  <%= video.create_time %></p>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<footer>
+  <p>Developed and designed by - Guillaume Juste</p>
+</footer>
